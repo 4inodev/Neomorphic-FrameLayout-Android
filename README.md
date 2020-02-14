@@ -43,14 +43,14 @@ Sync the gradle and that's it! :+1:
   app:neomorph_highlight_color="@color/neomorph_highlight_color">
 ```
 ## Attributes: 
-```"neomorph_view_type"``` -  shape type: rectangular or circular
-```"neomorph_shadow_type"``` - shadow type: inner or outer
-```"neomorph_elevation"``` - dimension value, determines shadow elevation and inner padding
-```"neomorph_corner_radius"``` - pretty self-explanatory =)
-```"neomorph_background_color"``` - view color
-```"neomorph_shadow_color"``` - right-bottom shadow color
-```"neomorph_highlight_color"``` - left-top highlight color
-```"neomorph_clickable"``` - not used yet
+```"neomorph_view_type"``` -  shape type: rectangular or circular <br>
+```"neomorph_shadow_type"``` - shadow type: inner or outer <br>
+```"neomorph_elevation"``` - dimension value, determines shadow elevation and inner padding <br>
+```"neomorph_corner_radius"``` - pretty self-explanatory =) <br>
+```"neomorph_background_color"``` - view color <br>
+```"neomorph_shadow_color"``` - right-bottom shadow color <br>
+```"neomorph_highlight_color"``` - left-top highlight color <br>
+```"neomorph_clickable"``` - not used yet <br>
 
 ## LICENSE : 
 ```
