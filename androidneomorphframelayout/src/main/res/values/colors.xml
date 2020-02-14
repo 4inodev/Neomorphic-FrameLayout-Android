@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="neomorph_background_color">#F1F3F6</color>
+    <color name="neomorph_shadow_color">#D9DBDE</color>
+    <color name="neomorph_highlight_color">#FFFFFF</color>
+    <color name="shadowColor">#000</color>
+</resources>

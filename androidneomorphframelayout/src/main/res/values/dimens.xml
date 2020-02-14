@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="neomorph_view_corner_radius">16dp</dimen>
+    <dimen name="neomorph_view_corner_radius_circle">500dp</dimen>
+    <dimen name="neomorph_view_elevation">5dp</dimen>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NeomorphFrameLayout">
+        <attr name="neomorph_view_type" />
+        <attr name="neomorph_shadow_type" />
+        <attr name="neomorph_elevation" format="dimension" />
+        <attr name="neomorph_corner_radius" format="dimension" />
+        <attr name="neomorph_background_color" format="color" />
+        <attr name="neomorph_shadow_color" format="color" />
+        <attr name="neomorph_highlight_color" format="color" />
+        <attr name="neomorph_clickable" format="boolean" />
+    </declare-styleable>
+
+    <attr name="neomorph_view_type">
+        <enum name="rectangular" value="1" />
+        <enum name="circular" value="2" />
+    </attr>
+
+    <attr name="neomorph_shadow_type">
+        <enum name="outer" value="1" />
+        <enum name="inner" value="2" />
+    </attr>
+
+</resources>
