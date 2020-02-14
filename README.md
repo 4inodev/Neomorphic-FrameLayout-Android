@@ -1,7 +1,7 @@
 # Neomorph FrameLayout
 [![](https://jitpack.io/v/4inodev/Neomorphic-FrameLayout-Android.svg)](https://jitpack.io/#4inodev/Neomorphic-FrameLayout-Android)
 
-Neomorphic Design related Android library which is basically a custom FrameLayout.
+Neomorphic Design related Android library which is a custom FrameLayout.
 Basically, you just put your TextViews and Button inside this FrameLayout and you're good to go!
  
 <img src="https://raw.githubusercontent.com/4inodev/Neomorphic-FrameLayout-Android/master/screenshots/light_main.jpg" height="500"> <img src="https://raw.githubusercontent.com/4inodev/Neomorphic-FrameLayout-Android/master/screenshots/light_cp.jpg" height="500"><img src="https://raw.githubusercontent.com/4inodev/Neomorphic-FrameLayout-Android/master/screenshots/dark_main.jpg" height="500">
