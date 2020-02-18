@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 public class NeomorphFrameLayout extends FrameLayout {
@@ -22,6 +23,7 @@ public class NeomorphFrameLayout extends FrameLayout {
     private int HIGHLIGHT_COLOR;
     private int SHADOW_COLOR;
     private int BACKGROUND_COLOR;
+    private int LAYER_TYPE;
     //private boolean CLICKABLE;
 
     //global variables
@@ -83,6 +85,10 @@ public class NeomorphFrameLayout extends FrameLayout {
             HIGHLIGHT_COLOR = a.getColor(R.styleable.NeomorphFrameLayout_neomorph_highlight_color,
                     ContextCompat.getColor(context, R.color.neomorph_highlight_color));
             //CLICKABLE = a.getBoolean(R.styleable.NeoMorphFrameLayout_neomorph_clickable, false);
+            String layerType = a.getString(R.styleable.NeomorphFrameLayout_neomorph_layer_type);
+            if (layerType == null || layerType.equals("1")) {
+                LAYER_TYPE = View.LAYER_TYPE_SOFTWARE; //SW by default
+            } else LAYER_TYPE = View.LAYER_TYPE_HARDWARE;
 
             a.recycle();
         } else {
@@ -92,6 +98,7 @@ public class NeomorphFrameLayout extends FrameLayout {
             BACKGROUND_COLOR = ContextCompat.getColor(context, R.color.neomorph_background_color);
             SHADOW_COLOR = ContextCompat.getColor(context, R.color.neomorph_shadow_color);
             HIGHLIGHT_COLOR = ContextCompat.getColor(context, R.color.neomorph_highlight_color);
+            LAYER_TYPE = View.LAYER_TYPE_SOFTWARE;
         }
 
         basePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -117,7 +124,7 @@ public class NeomorphFrameLayout extends FrameLayout {
         //setOnTouchListener(onTouchListener);
         setWillNotDraw(false);
         //should be SW accelerated, since HW doesn't support paint.setShadowLayer();
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        setLayerType(LAYER_TYPE, null);
     }
 
     @Override

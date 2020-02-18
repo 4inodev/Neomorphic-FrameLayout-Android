@@ -6,10 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+    <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:neomorph_shadow_type="outer"
+        app:neomorph_layer_type="hardware"
+        app:neomorph_background_color="@color/neomorph_background_color"
+        app:neomorph_corner_radius="@dimen/neomorph_view_corner_radius"
+        app:neomorph_elevation="@dimen/neomorph_view_elevation"
+        app:neomorph_view_type="rectangular"
+        app:neomorph_shadow_color="@color/neomorph_shadow_color"
+        app:neomorph_highlight_color="@color/neomorph_highlight_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

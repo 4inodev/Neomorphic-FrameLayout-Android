@@ -9,6 +9,7 @@
         <attr name="neomorph_shadow_color" format="color" />
         <attr name="neomorph_highlight_color" format="color" />
         <attr name="neomorph_clickable" format="boolean" />
+        <attr name="neomorph_layer_type"/>
     </declare-styleable>
 
     <attr name="neomorph_view_type">
@@ -19,6 +20,11 @@
     <attr name="neomorph_shadow_type">
         <enum name="outer" value="1" />
         <enum name="inner" value="2" />
+    </attr>
+
+    <attr name="neomorph_layer_type">
+        <enum name="software" value="1" />
+        <enum name="hardware" value="2" />
     </attr>
 
 </resources>
