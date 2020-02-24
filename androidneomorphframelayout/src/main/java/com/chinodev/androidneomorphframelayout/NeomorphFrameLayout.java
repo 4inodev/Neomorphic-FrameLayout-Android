@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 public class NeomorphFrameLayout extends FrameLayout {
@@ -24,7 +23,7 @@ public class NeomorphFrameLayout extends FrameLayout {
     private int SHADOW_COLOR;
     private int BACKGROUND_COLOR;
     private int LAYER_TYPE;
-    //private boolean CLICKABLE;
+    private boolean SHADOW_VISIBLE;
 
     //global variables
     private int SHAPE_PADDING = 0;
@@ -59,6 +58,11 @@ public class NeomorphFrameLayout extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+        getAttrs(context, attrs);
+        initPaints();
+    }
+
+    public void getAttrs(Context context, AttributeSet attrs) {
         int defaultElevation = (int) context.getResources().getDimension(R.dimen.neomorph_view_elevation);
         int defaultCornerRadius = (int) context.getResources().getDimension(R.dimen.neomorph_view_corner_radius);
 
@@ -84,7 +88,7 @@ public class NeomorphFrameLayout extends FrameLayout {
                     ContextCompat.getColor(context, R.color.neomorph_shadow_color));
             HIGHLIGHT_COLOR = a.getColor(R.styleable.NeomorphFrameLayout_neomorph_highlight_color,
                     ContextCompat.getColor(context, R.color.neomorph_highlight_color));
-            //CLICKABLE = a.getBoolean(R.styleable.NeoMorphFrameLayout_neomorph_clickable, false);
+            SHADOW_VISIBLE = a.getBoolean(R.styleable.NeomorphFrameLayout_neomorph_shadow_visible, true);
             String layerType = a.getString(R.styleable.NeomorphFrameLayout_neomorph_layer_type);
             if (layerType == null || layerType.equals("1")) {
                 LAYER_TYPE = View.LAYER_TYPE_SOFTWARE; //SW by default
@@ -99,20 +103,23 @@ public class NeomorphFrameLayout extends FrameLayout {
             SHADOW_COLOR = ContextCompat.getColor(context, R.color.neomorph_shadow_color);
             HIGHLIGHT_COLOR = ContextCompat.getColor(context, R.color.neomorph_highlight_color);
             LAYER_TYPE = View.LAYER_TYPE_SOFTWARE;
+            SHADOW_VISIBLE = true;
         }
+    }
 
+    private void initPaints() {
         basePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintHighLight = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         basePaint.setColor(BACKGROUND_COLOR);
-        //paint for shadow
         paintShadow.setColor(BACKGROUND_COLOR);
-        paintShadow.setShadowLayer(ELEVATION, ELEVATION, ELEVATION, SHADOW_COLOR);
-        //paint for highlight
         paintHighLight.setColor(BACKGROUND_COLOR);
-        paintHighLight.setShadowLayer(ELEVATION, -ELEVATION, -ELEVATION, HIGHLIGHT_COLOR);
 
+        if (SHADOW_VISIBLE) {
+            paintShadow.setShadowLayer(ELEVATION, ELEVATION, ELEVATION, SHADOW_COLOR);
+            paintHighLight.setShadowLayer(ELEVATION, -ELEVATION, -ELEVATION, HIGHLIGHT_COLOR);
+        }
 
         basePath = new Path();
         pathHighlight = new Path();
@@ -121,11 +128,10 @@ public class NeomorphFrameLayout extends FrameLayout {
         //TODO: make SHAPE_PADDING dynamic
         SHAPE_PADDING = ELEVATION * 2;
 
-        //setOnTouchListener(onTouchListener);
         setWillNotDraw(false);
-        //should be SW accelerated, since HW doesn't support paint.setShadowLayer();
         setLayerType(LAYER_TYPE, null);
     }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -151,35 +157,16 @@ public class NeomorphFrameLayout extends FrameLayout {
             case SHADOW_TYPE_OUTER:
                 break;
         }
-        paintShadow.setAlpha(155);
-        paintHighLight.setAlpha(155);
+        if (SHADOW_VISIBLE) {
+            paintShadow.setAlpha(155);
+            paintHighLight.setAlpha(155);
+        } else {
+            paintShadow.setAlpha(0);
+            paintHighLight.setAlpha(0);
+        }
         canvas.drawPath(basePath, basePaint);
         canvas.drawPath(pathShadow, paintShadow);
         canvas.drawPath(pathHighlight, paintHighLight);
-
-        /*switch (SHAPE_TYPE) {
-            case SHAPE_TYPE_CIRCLE:
-                int radius = (this.getWidth() / 2) - SHAPE_PADDING;
-                canvas.drawCircle(this.getWidth() / 2, this.getHeight() / 2, radius, paintShadow);
-                canvas.drawCircle(this.getWidth() / 2, this.getHeight() / 2, radius, paintHighLight);
-                break;
-            default:
-            case SHAPE_TYPE_RECTANGLE:
-
-                canvas.drawRoundRect(
-                        new RectF(SHAPE_PADDING, SHAPE_PADDING, this.getWidth() - SHAPE_PADDING, this.getHeight() - SHAPE_PADDING),
-                        CORNER_RADIUS,
-                        CORNER_RADIUS,
-                        paintShadow);
-                canvas.drawRoundRect(
-                        new RectF(SHAPE_PADDING, SHAPE_PADDING, this.getWidth() - SHAPE_PADDING, this.getHeight() - SHAPE_PADDING),
-                        CORNER_RADIUS,
-                        CORNER_RADIUS,
-                        paintHighLight);
-                break;
-        }*/
-
-        //rectangle = new RectF(SHAPE_PADDING, SHAPE_PADDING, this.getWidth() - SHAPE_PADDING, this.getHeight() - SHAPE_PADDING);
     }
 
     private void resetPath(int w, int h) {
@@ -216,5 +203,28 @@ public class NeomorphFrameLayout extends FrameLayout {
         basePath.close();
         pathHighlight.close();
         pathShadow.close();
+    }
+
+    public void setShadowInner() {
+        SHADOW_VISIBLE = true;
+        SHADOW_TYPE = SHADOW_TYPE_INNER;
+        initPaints();
+        resetPath(getWidth(), getHeight());
+        invalidate();
+    }
+
+    public void setShadowOuter() {
+        SHADOW_VISIBLE = true;
+        SHADOW_TYPE = SHADOW_TYPE_OUTER;
+        initPaints();
+        resetPath(getWidth(), getHeight());
+        invalidate();
+    }
+
+    public void setShadowNone() {
+        SHADOW_VISIBLE = false;
+        initPaints();
+        resetPath(getWidth(), getHeight());
+        invalidate();
     }
 }
