@@ -60,6 +60,7 @@ public class NeomorphFrameLayout extends FrameLayout {
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         getAttrs(context, attrs);
         initPaints();
+        rectangle = new RectF(SHAPE_PADDING, SHAPE_PADDING, this.getWidth() - SHAPE_PADDING, this.getHeight() - SHAPE_PADDING);
     }
 
     public void getAttrs(Context context, AttributeSet attrs) {
@@ -104,6 +105,7 @@ public class NeomorphFrameLayout extends FrameLayout {
             HIGHLIGHT_COLOR = ContextCompat.getColor(context, R.color.neomorph_highlight_color);
             LAYER_TYPE = View.LAYER_TYPE_SOFTWARE;
             SHADOW_VISIBLE = true;
+            SHADOW_TYPE = SHADOW_TYPE_OUTER;
         }
     }
 
@@ -216,6 +218,18 @@ public class NeomorphFrameLayout extends FrameLayout {
     public void setShadowOuter() {
         SHADOW_VISIBLE = true;
         SHADOW_TYPE = SHADOW_TYPE_OUTER;
+        initPaints();
+        resetPath(getWidth(), getHeight());
+        invalidate();
+    }
+
+    public void switchShadowType() {
+        SHADOW_VISIBLE = true;
+
+        if (SHADOW_TYPE.equals(SHADOW_TYPE_INNER)) {
+            SHADOW_TYPE = SHADOW_TYPE_OUTER;
+        } else SHADOW_TYPE = SHADOW_TYPE_INNER;
+
         initPaints();
         resetPath(getWidth(), getHeight());
         invalidate();
