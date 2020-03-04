@@ -20,7 +20,7 @@ allprojects {
 Add the dependency : 
 ```java
 dependencies {
-	        implementation 'com.github.4inodev:Neomorphic-FrameLayout-Android:1.0'
+	        implementation 'com.github.4inodev:Neomorphic-FrameLayout-Android:1.03'
 	}
 ```
 Sync the gradle and that's it! :+1:
