@@ -1,244 +1,334 @@
-package com.chinodev.androidneomorphframelayout;
+package com.chinodev.androidneomorphframelayout
 
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
+import android.util.AttributeSet
+import android.widget.FrameLayout
+import androidx.annotation.ColorInt
+import androidx.annotation.DimenRes
+import androidx.core.content.ContextCompat
+import androidx.core.content.withStyledAttributes
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.RectF;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.FrameLayout;
+@Suppress("PrivatePropertyName")
+class NeomorphFrameLayout(
+    context: Context, attrs: AttributeSet?, defStyleAttr: Int): FrameLayout(context, attrs, defStyleAttr)
+{
 
-import androidx.core.content.ContextCompat;
+    constructor(context: Context, attrs: AttributeSet): this(context, attrs, 0)
+    constructor(context: Context): this(context, null, 0)
 
-public class NeomorphFrameLayout extends FrameLayout {
+    //constants
+    private val SHAPE_TYPE_RECTANGLE = "1"
+    private val SHAPE_TYPE_CIRCLE = "2"
+    private val SHADOW_TYPE_OUTER = "1"
+    private val SHADOW_TYPE_INNER = "2"
+
     //attributes
-    private String SHAPE_TYPE;
-    private String SHADOW_TYPE;
-    private int CORNER_RADIUS;
-    private int ELEVATION;
-    private int HIGHLIGHT_COLOR;
-    private int SHADOW_COLOR;
-    private int BACKGROUND_COLOR;
-    private int LAYER_TYPE;
-    private boolean SHADOW_VISIBLE;
+    private var SHAPE_TYPE = SHAPE_TYPE_RECTANGLE
+    private var SHADOW_TYPE = SHADOW_TYPE_OUTER
+    private var CORNER_RADIUS = 0
+    private var ELEVATION = 0
+    private var HIGHLIGHT_COLOR = 0
+    private var SHADOW_COLOR = 0
+    private var BACKGROUND_COLOR = 0
+    private var LAYER_TYPE = LAYER_TYPE_SOFTWARE
+    private var SHADOW_VISIBLE = true
 
     //global variables
-    private int SHAPE_PADDING = 0;
-    //constants
-    private final String SHAPE_TYPE_RECTANGLE = "1";
-    private final String SHAPE_TYPE_CIRCLE = "2";
-    private final String SHADOW_TYPE_OUTER = "1";
-    private final String SHADOW_TYPE_INNER = "2";
+    private var SHAPE_PADDING = 0
+
     //global objects
-    private Paint basePaint;
-    private Paint paintShadow;
-    private Paint paintHighLight;
-    private Path basePath;
-    private Path pathShadow;
-    private Path pathHighlight;
-    private RectF rectangle;
+    private lateinit var basePaint: Paint
+    private lateinit var paintShadow: Paint
+    private lateinit var paintHighLight: Paint
+    private lateinit var basePath: Path
+    private lateinit var pathShadow: Path
+    private lateinit var pathHighlight: Path
+    private var rectangle: RectF
 
+    init {
+        getAttrs(context, attrs)
+        initPaints()
 
-    public NeomorphFrameLayout(Context context) {
-        super(context);
-        init(context, null, 0);
+        rectangle = RectF(
+            SHAPE_PADDING.toFloat(),
+            SHAPE_PADDING.toFloat(),
+            (this.width - SHAPE_PADDING).toFloat(),
+            (this.height - SHAPE_PADDING).toFloat()
+        )
     }
 
-    public NeomorphFrameLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs, 0);
-    }
+    private fun getAttrs(context: Context, attrs: AttributeSet?) {
+        val defaultElevation =
+            context.resources.getDimension(R.dimen.neomorph_view_elevation).toInt()
+        val defaultCornerRadius =
+            context.resources.getDimension(R.dimen.neomorph_view_corner_radius).toInt()
 
-    public NeomorphFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr);
-    }
+        attrs?.let {
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-        getAttrs(context, attrs);
-        initPaints();
-        rectangle = new RectF(SHAPE_PADDING, SHAPE_PADDING, this.getWidth() - SHAPE_PADDING, this.getHeight() - SHAPE_PADDING);
-    }
+            context.withStyledAttributes(attrs, R.styleable.NeomorphFrameLayout) {
+                //get all attributes
+                SHAPE_TYPE = getString(R.styleable.NeomorphFrameLayout_neomorph_view_type) ?: SHAPE_TYPE_RECTANGLE
 
-    public void getAttrs(Context context, AttributeSet attrs) {
-        int defaultElevation = (int) context.getResources().getDimension(R.dimen.neomorph_view_elevation);
-        int defaultCornerRadius = (int) context.getResources().getDimension(R.dimen.neomorph_view_corner_radius);
+                SHADOW_TYPE = getString(R.styleable.NeomorphFrameLayout_neomorph_shadow_type) ?: SHADOW_TYPE_OUTER
 
-        if (attrs != null) {
-            //get attrs array
-            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.NeomorphFrameLayout);
-            //get all attributes
-            SHAPE_TYPE = a.getString(R.styleable.NeomorphFrameLayout_neomorph_view_type);
-            if (SHAPE_TYPE == null) {
-                SHAPE_TYPE = SHAPE_TYPE_RECTANGLE;
+                ELEVATION = getDimensionPixelSize(
+                    R.styleable.NeomorphFrameLayout_neomorph_elevation,
+                    defaultElevation
+                )
+                CORNER_RADIUS = getDimensionPixelSize(
+                    R.styleable.NeomorphFrameLayout_neomorph_corner_radius,
+                    defaultCornerRadius
+                )
+                BACKGROUND_COLOR = getColor(
+                    R.styleable.NeomorphFrameLayout_neomorph_background_color,
+                    ContextCompat.getColor(context, R.color.neomorph_background_color)
+                )
+                SHADOW_COLOR = getColor(
+                    R.styleable.NeomorphFrameLayout_neomorph_shadow_color,
+                    ContextCompat.getColor(context, R.color.neomorph_shadow_color)
+                )
+                HIGHLIGHT_COLOR = getColor(
+                    R.styleable.NeomorphFrameLayout_neomorph_highlight_color,
+                    ContextCompat.getColor(context, R.color.neomorph_highlight_color)
+                )
+                SHADOW_VISIBLE =
+                    getBoolean(R.styleable.NeomorphFrameLayout_neomorph_shadow_visible, true)
+                val layerType = getString(R.styleable.NeomorphFrameLayout_neomorph_layer_type)
+                LAYER_TYPE = if (layerType == null || layerType == "1") {
+                    LAYER_TYPE_SOFTWARE //SW by default
+                } else LAYER_TYPE_HARDWARE
+
             }
+        } ?: run {
 
-            SHADOW_TYPE = a.getString(R.styleable.NeomorphFrameLayout_neomorph_shadow_type);
-            if (SHADOW_TYPE == null) {
-                SHADOW_TYPE = SHADOW_TYPE_OUTER;
-            }
+            ELEVATION = defaultElevation
+            CORNER_RADIUS = defaultCornerRadius
+            BACKGROUND_COLOR = ContextCompat.getColor(context, R.color.neomorph_background_color)
+            SHADOW_COLOR = ContextCompat.getColor(context, R.color.neomorph_shadow_color)
+            HIGHLIGHT_COLOR = ContextCompat.getColor(context, R.color.neomorph_highlight_color)
 
-            ELEVATION = a.getDimensionPixelSize(R.styleable.NeomorphFrameLayout_neomorph_elevation, defaultElevation);
-            CORNER_RADIUS = a.getDimensionPixelSize(R.styleable.NeomorphFrameLayout_neomorph_corner_radius, defaultCornerRadius);
-            BACKGROUND_COLOR = a.getColor(R.styleable.NeomorphFrameLayout_neomorph_background_color,
-                    ContextCompat.getColor(context, R.color.neomorph_background_color));
-            SHADOW_COLOR = a.getColor(R.styleable.NeomorphFrameLayout_neomorph_shadow_color,
-                    ContextCompat.getColor(context, R.color.neomorph_shadow_color));
-            HIGHLIGHT_COLOR = a.getColor(R.styleable.NeomorphFrameLayout_neomorph_highlight_color,
-                    ContextCompat.getColor(context, R.color.neomorph_highlight_color));
-            SHADOW_VISIBLE = a.getBoolean(R.styleable.NeomorphFrameLayout_neomorph_shadow_visible, true);
-            String layerType = a.getString(R.styleable.NeomorphFrameLayout_neomorph_layer_type);
-            if (layerType == null || layerType.equals("1")) {
-                LAYER_TYPE = View.LAYER_TYPE_SOFTWARE; //SW by default
-            } else LAYER_TYPE = View.LAYER_TYPE_HARDWARE;
-
-            a.recycle();
-        } else {
-            SHAPE_TYPE = "rectangle";
-            ELEVATION = defaultElevation;
-            CORNER_RADIUS = defaultCornerRadius;
-            BACKGROUND_COLOR = ContextCompat.getColor(context, R.color.neomorph_background_color);
-            SHADOW_COLOR = ContextCompat.getColor(context, R.color.neomorph_shadow_color);
-            HIGHLIGHT_COLOR = ContextCompat.getColor(context, R.color.neomorph_highlight_color);
-            LAYER_TYPE = View.LAYER_TYPE_SOFTWARE;
-            SHADOW_VISIBLE = true;
-            SHADOW_TYPE = SHADOW_TYPE_OUTER;
         }
+
     }
 
-    private void initPaints() {
-        basePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paintShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paintHighLight = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private fun initPaints() {
 
-        basePaint.setColor(BACKGROUND_COLOR);
-        paintShadow.setColor(BACKGROUND_COLOR);
-        paintHighLight.setColor(BACKGROUND_COLOR);
+        basePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paintShadow = Paint(Paint.ANTI_ALIAS_FLAG)
+        paintHighLight = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        basePaint.color = BACKGROUND_COLOR
+        paintShadow.color = BACKGROUND_COLOR
+        paintHighLight.color = BACKGROUND_COLOR
 
         if (SHADOW_VISIBLE) {
-            paintShadow.setShadowLayer(ELEVATION, ELEVATION, ELEVATION, SHADOW_COLOR);
-            paintHighLight.setShadowLayer(ELEVATION, -ELEVATION, -ELEVATION, HIGHLIGHT_COLOR);
+            paintShadow.setShadowLayer(
+                ELEVATION.toFloat(),
+                ELEVATION.toFloat(),
+                ELEVATION.toFloat(),
+                SHADOW_COLOR
+            )
+            paintHighLight.setShadowLayer(
+                ELEVATION.toFloat(),
+                -ELEVATION.toFloat(),
+                -ELEVATION.toFloat(),
+                HIGHLIGHT_COLOR
+            )
         }
 
-        basePath = new Path();
-        pathHighlight = new Path();
-        pathShadow = new Path();
+        basePath = Path()
+        pathHighlight = Path()
+        pathShadow = Path()
 
         //TODO: make SHAPE_PADDING dynamic
-        SHAPE_PADDING = ELEVATION * 2;
+        SHAPE_PADDING = ELEVATION * 2
 
-        setWillNotDraw(false);
-        setLayerType(LAYER_TYPE, null);
+        setWillNotDraw(false)
+        setLayerType(LAYER_TYPE, null)
     }
 
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        rectangle = new RectF(SHAPE_PADDING, SHAPE_PADDING, this.getWidth() - SHAPE_PADDING, this.getHeight() - SHAPE_PADDING);
-        resetPath(w, h);
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        rectangle = RectF(
+            SHAPE_PADDING.toFloat(),
+            SHAPE_PADDING.toFloat(),
+            (this.width - SHAPE_PADDING).toFloat(),
+            (this.height - SHAPE_PADDING).toFloat()
+        )
+        resetPath(w, h)
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        setPadding(SHAPE_PADDING, SHAPE_PADDING, SHAPE_PADDING, SHAPE_PADDING);
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        setPadding(SHAPE_PADDING, SHAPE_PADDING, SHAPE_PADDING, SHAPE_PADDING)
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        switch (SHADOW_TYPE) {
-            case SHADOW_TYPE_INNER:
-                canvas.clipPath(basePath);
-                break;
-            default:
-            case SHADOW_TYPE_OUTER:
-                break;
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        when (SHADOW_TYPE) {
+            SHADOW_TYPE_INNER -> canvas.clipPath(basePath)
+            SHADOW_TYPE_OUTER -> {}
         }
         if (SHADOW_VISIBLE) {
-            paintShadow.setAlpha(155);
-            paintHighLight.setAlpha(155);
+            paintShadow.alpha = 155
+            paintHighLight.alpha = 155
         } else {
-            paintShadow.setAlpha(0);
-            paintHighLight.setAlpha(0);
+            paintShadow.alpha = 0
+            paintHighLight.alpha = 0
         }
-        canvas.drawPath(basePath, basePaint);
-        canvas.drawPath(pathShadow, paintShadow);
-        canvas.drawPath(pathHighlight, paintHighLight);
+        canvas.apply {
+            drawPath(basePath, basePaint)
+            drawPath(pathShadow, paintShadow)
+            drawPath(pathHighlight, paintHighLight)
+        }
     }
 
-    private void resetPath(int w, int h) {
-        basePath.reset();
-        pathHighlight.reset();
-        pathShadow.reset();
+    private fun resetPath(w: Int, h: Int) {
+        basePath.reset()
+        pathHighlight.reset()
+        pathShadow.reset()
 
-        switch (SHAPE_TYPE) {
-            case SHAPE_TYPE_CIRCLE:
+        when (SHAPE_TYPE) {
+            SHAPE_TYPE_CIRCLE -> {
                 //get max suitable diameter, which is the smallest dimension
-                int maxDiameter = this.getWidth() < this.getHeight() ? this.getWidth() : this.getHeight();
-                int radius = (maxDiameter / 2) - SHAPE_PADDING;
-                basePath.addCircle(w / 2, h / 2, radius, Path.Direction.CW);
-                pathHighlight.addCircle(w / 2, h / 2, radius, Path.Direction.CW);
-                pathShadow.addCircle(w / 2, h / 2, radius, Path.Direction.CW);
-                break;
-            default:
-            case SHAPE_TYPE_RECTANGLE:
-                basePath.addRoundRect(rectangle, CORNER_RADIUS, CORNER_RADIUS, Path.Direction.CW);
-                pathHighlight.addRoundRect(rectangle, CORNER_RADIUS, CORNER_RADIUS, Path.Direction.CW);
-                pathShadow.addRoundRect(rectangle, CORNER_RADIUS, CORNER_RADIUS, Path.Direction.CW);
-                break;
+                val maxDiameter = if (this.width < this.height) this.width else this.height
+                val radius = (maxDiameter / 2) - SHAPE_PADDING
+                basePath.addCircle(
+                    (w / 2).toFloat(),
+                    (h / 2).toFloat(),
+                    radius.toFloat(),
+                    Path.Direction.CW
+                )
+                pathHighlight.addCircle(
+                    (w / 2).toFloat(),
+                    (h / 2).toFloat(),
+                    radius.toFloat(),
+                    Path.Direction.CW
+                )
+                pathShadow.addCircle(
+                    (w / 2).toFloat(),
+                    (h / 2).toFloat(),
+                    radius.toFloat(),
+                    Path.Direction.CW
+                )
+            }
+
+            SHAPE_TYPE_RECTANGLE -> {
+                basePath.addRoundRect(
+                    rectangle,
+                    CORNER_RADIUS.toFloat(),
+                    CORNER_RADIUS.toFloat(),
+                    Path.Direction.CW
+                )
+                pathHighlight.addRoundRect(
+                    rectangle,
+                    CORNER_RADIUS.toFloat(),
+                    CORNER_RADIUS.toFloat(),
+                    Path.Direction.CW
+                )
+                pathShadow.addRoundRect(
+                    rectangle,
+                    CORNER_RADIUS.toFloat(),
+                    CORNER_RADIUS.toFloat(),
+                    Path.Direction.CW
+                )
+            }
+
+            else -> {
+                basePath.addRoundRect(
+                    rectangle,
+                    CORNER_RADIUS.toFloat(),
+                    CORNER_RADIUS.toFloat(),
+                    Path.Direction.CW
+                )
+                pathHighlight.addRoundRect(
+                    rectangle,
+                    CORNER_RADIUS.toFloat(),
+                    CORNER_RADIUS.toFloat(),
+                    Path.Direction.CW
+                )
+                pathShadow.addRoundRect(
+                    rectangle,
+                    CORNER_RADIUS.toFloat(),
+                    CORNER_RADIUS.toFloat(),
+                    Path.Direction.CW
+                )
+            }
         }
 
-        if (SHADOW_TYPE.equals(SHADOW_TYPE_INNER)) {
-            if (!pathHighlight.isInverseFillType()) {
-                pathHighlight.toggleInverseFillType();
+        if (SHADOW_TYPE == SHADOW_TYPE_INNER) {
+            if (!pathHighlight.isInverseFillType) {
+                pathHighlight.toggleInverseFillType()
             }
-            if (!pathShadow.isInverseFillType()) {
-                pathShadow.toggleInverseFillType();
+            if (!pathShadow.isInverseFillType) {
+                pathShadow.toggleInverseFillType()
             }
         }
 
-        basePath.close();
-        pathHighlight.close();
-        pathShadow.close();
+        basePath.close()
+        pathHighlight.close()
+        pathShadow.close()
     }
 
-    public void setShadowInner() {
-        SHADOW_VISIBLE = true;
-        SHADOW_TYPE = SHADOW_TYPE_INNER;
-        initPaints();
-        resetPath(getWidth(), getHeight());
-        invalidate();
+    fun setShadowInner() = setShadow(true)
+    fun setShadowOuter() = setShadow(false)
+    fun switchShadowType() = setShadow(SHADOW_TYPE != SHADOW_TYPE_INNER) //switch
+    fun setShadowNone() = setShadow(false, isNone = true)
+
+    private fun setShadow(isInner: Boolean, isNone: Boolean = false){
+        SHADOW_VISIBLE = if (isNone){
+            false
+        }else{
+            SHADOW_TYPE = if (isInner) SHADOW_TYPE_INNER else SHADOW_TYPE_OUTER
+            true
+        }
+        updateUI()
     }
 
-    public void setShadowOuter() {
-        SHADOW_VISIBLE = true;
-        SHADOW_TYPE = SHADOW_TYPE_OUTER;
-        initPaints();
-        resetPath(getWidth(), getHeight());
-        invalidate();
+    fun neomorphBackgroundColor(@ColorInt color: Int) {
+        BACKGROUND_COLOR = color
+        updateUI()
     }
 
-    public void switchShadowType() {
-        SHADOW_VISIBLE = true;
-
-        if (SHADOW_TYPE.equals(SHADOW_TYPE_INNER)) {
-            SHADOW_TYPE = SHADOW_TYPE_OUTER;
-        } else SHADOW_TYPE = SHADOW_TYPE_INNER;
-
-        initPaints();
-        resetPath(getWidth(), getHeight());
-        invalidate();
+    fun neomorphShadowColor(@ColorInt color: Int) {
+        SHADOW_COLOR = color
+        updateUI()
     }
 
-    public void setShadowNone() {
-        SHADOW_VISIBLE = false;
-        initPaints();
-        resetPath(getWidth(), getHeight());
-        invalidate();
+    fun neomorphHighlightColor(@ColorInt color: Int) {
+        HIGHLIGHT_COLOR = color
+        updateUI()
     }
+
+    fun setViewRectangular(){
+        SHAPE_TYPE = SHAPE_TYPE_RECTANGLE
+        updateUI()
+    }
+
+    fun setViewCircular(){
+        SHAPE_TYPE = SHAPE_TYPE_CIRCLE
+        updateUI()
+    }
+
+    fun neomorphElevation(elevation: Int){
+        ELEVATION = elevation
+        updateUI()
+    }
+
+    fun neomorphCornerRadius(cornerRadius: Int){
+        CORNER_RADIUS = cornerRadius
+        updateUI()
+    }
+
+    private fun updateUI(){
+        initPaints()
+        resetPath(width, height)
+        invalidate()
+    }
+
+
 }

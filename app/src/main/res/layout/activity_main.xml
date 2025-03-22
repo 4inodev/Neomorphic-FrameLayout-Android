@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="16dp"
     tools:context=".MainActivity">
 
     <com.chinodev.androidneomorphframelayout.NeomorphFrameLayout
+        android:id="@+id/neomorph_frame_layout"
         android:layout_width="100dp"
         android:layout_height="100dp"
         app:neomorph_shadow_type="outer"
@@ -17,9 +19,42 @@
         app:neomorph_view_type="rectangular"
         app:neomorph_shadow_color="@color/neomorph_shadow_color"
         app:neomorph_highlight_color="@color/neomorph_highlight_color"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/change_shape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Shape"/>
+
+        <Button
+            android:id="@+id/change_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Background"/>
+
+        <Button
+            android:id="@+id/change_shadow_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Shadow Color"/>
+
+        <Button
+            android:id="@+id/change_highlight_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Highlight Color"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

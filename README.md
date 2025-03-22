@@ -20,7 +20,7 @@ allprojects {
 Add the dependency : 
 ```java
 dependencies {
-	        implementation 'com.github.4inodev:Neomorphic-FrameLayout-Android:1.03'
+	        implementation 'com.github.4inodev:Neomorphic-FrameLayout-Android:<latest>'
 	}
 ```
 Sync the gradle and that's it! :+1:
@@ -51,6 +51,32 @@ Sync the gradle and that's it! :+1:
 ```"neomorph_shadow_color"``` - right-bottom shadow color <br>
 ```"neomorph_highlight_color"``` - left-top highlight color <br>
 ```"neomorph_clickable"``` - not used yet <br>
+
+### Code
+
+```kotlin
+
+//shadow
+setShadowInner()
+setShadowOuter()
+switchShadowType()
+setShadowNone()
+
+//colors
+neomorphBackgroundColor(color: Int)
+neomorphShadowColor(color: Int)
+neomorphHighlightColor(color: Int)
+
+//shape
+setViewRectangular()
+setViewCircular()
+
+//misc
+neomorphElevation()
+neomorphCornerRadius()
+
+```
+
 
 ## LICENSE : 
     Licensed under the Apache License, Version 2.0 (the "License");
