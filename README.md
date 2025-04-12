@@ -1,5 +1,5 @@
 # Neomorph FrameLayout
-[![](https://jitpack.io/v/4inodev/Neomorphic-FrameLayout-Android.svg)](https://jitpack.io/#4inodev/Neomorphic-FrameLayout-Android)
+[![](https://jitpack.io/v/ssskhan/Neomorphic-FrameLayout-Android.svg)](https://jitpack.io/#ssskhan/Neomorphic-FrameLayout-Android)
 
 Neomorphic Design related Android library which is a custom FrameLayout.
 Basically, you just put your TextViews and Button inside this FrameLayout and you're good to go!
@@ -17,10 +17,15 @@ allprojects {
 		}
 	}
 ```
+> ⚠️ **Notice**  
+> This is a fork of the original [4inodev/Neomorphic-FrameLayout-Android](https://github.com/4inodev/Neomorphic-FrameLayout-Android),  
+> which appears to no longer be maintained.  
+> I’ve fixed and updated the library, and published it via **JitPack** here: 
+
 Add the dependency : 
 ```java
 dependencies {
-	        implementation 'com.github.4inodev:Neomorphic-FrameLayout-Android:1.03'
+	        implementation 'com.github.ssskhan:Neomorphic-FrameLayout-Android:2.0.0'
 	}
 ```
 Sync the gradle and that's it! :+1:
@@ -51,6 +56,32 @@ Sync the gradle and that's it! :+1:
 ```"neomorph_shadow_color"``` - right-bottom shadow color <br>
 ```"neomorph_highlight_color"``` - left-top highlight color <br>
 ```"neomorph_clickable"``` - not used yet <br>
+
+### Code
+
+```kotlin
+
+//shadow
+setShadowInner()
+setShadowOuter()
+switchShadowType()
+setShadowNone()
+
+//colors
+neomorphBackgroundColor(color: Int)
+neomorphShadowColor(color: Int)
+neomorphHighlightColor(color: Int)
+
+//shape
+setViewRectangular()
+setViewCircular()
+
+//misc
+neomorphElevation(elevation: Int)
+neomorphCornerRadius(cornerRadius: Int)
+
+```
+
 
 ## LICENSE : 
     Licensed under the Apache License, Version 2.0 (the "License");
